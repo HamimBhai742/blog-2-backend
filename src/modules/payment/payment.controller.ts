@@ -18,7 +18,8 @@ const createPaymentInit=createAsyncFn(async(req:Request,res:Response,next:NextFu
 
 const paymentSession=createAsyncFn(async(req:Request,res:Response,next:NextFunction)=>{
     const {userId}=req.user as IJwtPayload;
-    const session=await paymentServices.paymentSession(userId);
+    const {priceId}=req.body;
+    const session=await paymentServices.paymentSession(userId,priceId);
     
     sendResponse(res,{
         statusCode:httpStatusCode.OK,
