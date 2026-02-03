@@ -3,6 +3,7 @@ import { authRoutes } from '../modules/auth/auth.routes';
 import { userRoutes } from '../modules/user/user.routes';
 import { paymentRoutes } from '../modules/payment/payment.routes';
 import { postRoutes } from '../modules/post/post.routes';
+import { transactionRoutes } from '../modules/transaction/tarnsaction.routes';
 
 export const router = Router();
 const routes = [
@@ -21,6 +22,10 @@ const routes = [
   {
     path: '/posts',
     route: postRoutes,
+  },
+  {
+    path:'/transactions',
+    route: transactionRoutes,
   }
 ];
 
