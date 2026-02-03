@@ -15,6 +15,20 @@ const createPaymentInit=createAsyncFn(async(req,res,next)=>{
 }
 )
 
+const paymentSession=createAsyncFn(async(req,res,next)=>{
+    const {priceId}=req.body;
+    const {userId}=req.user as IJwtPayload;
+    const session=await paymentServices.paymentSession(userId,priceId);
+    
+    sendResponse(res,{
+        statusCode:httpStatusCode.OK,
+        success:true,
+        message:"Payment Session Created Successfully",
+        data:session
+    })
+})
+
 export const paymentController={
-    createPaymentInit
+    createPaymentInit,
+    paymentSession
 }
