@@ -29,7 +29,23 @@ const paymentSession=createAsyncFn(async(req:Request,res:Response,next:NextFunct
     })
 })
 
+
+const paymentSuccess=createAsyncFn(async(req:Request,res:Response,next:NextFunction)=>{
+    const params=req.params;
+    console.log("Payment Success Params:",params);
+    // const payment=await paymentServices.paymentSuccess(userId,transactionId);
+
+    // Handle post-payment success actions here
+    sendResponse(res,{  
+        statusCode:httpStatusCode.OK,
+        success:true,
+        message:"Payment Success",
+        data:null
+    })
+})
+
 export const paymentController={
     createPaymentInit,
-    paymentSession
+    paymentSession,
+    paymentSuccess
 }

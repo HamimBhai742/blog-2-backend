@@ -17,7 +17,6 @@ model User {
   posts     Post[]
   likes   PostLike[]
   payments  Payment[]
- transactions Transaction[]
  stripeCustomerId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -62,6 +61,8 @@ model PostLike{
 model Payment {
   id        String   @id @default(uuid())
   amount    Float
+  status    String
+  transactionId String  @unique
   userId    String
   user      User @relation(fields: [userId], references: [id])
   
@@ -69,17 +70,6 @@ model Payment {
   updatedAt DateTime @updatedAt
 }
 
-model Transaction {
-  id        String   @id @default(uuid())
-  type      String
-  transactionId String
-  amount    Float
-  userId    String
-  user      User @relation(fields: [userId], references: [id])
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 enum Role {
   ADMIN

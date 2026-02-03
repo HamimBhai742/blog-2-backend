@@ -10,6 +10,6 @@ const router =Router()
 
 router.post('/create-payment-intent',validateRequest(paymentValidation),checkAuth(Role.USER),paymentController.createPaymentInit)
 router.post('/create-checkout-session',checkAuth(Role.USER),paymentController.paymentSession)
-
+router.post('/success',paymentController.paymentSuccess)
 
 export const paymentRoutes=router;

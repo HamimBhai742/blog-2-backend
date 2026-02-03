@@ -3,6 +3,8 @@ import { stripe } from "../../config/stripe"
 import { AppError } from "../../error/coustom.error";
 import { getOrCreateCustomer } from "../../utils/getOrCreateCustomer";
 import httpStatusCode  from "http-status-codes";
+
+
 const createPaymentInit=async(price:number)=>{
     const paymentIntent=await stripe.paymentIntents.create({
         amount: price * 100,
@@ -17,6 +19,7 @@ const createPaymentInit=async(price:number)=>{
 }
 
 const paymentSession=async(userId:string,priceId:string)=>{
+    const transactionId="txn_"+Math.random().toString(36).substring(2,12);
     const user=await prisma.user.findUnique({where:{id:userId}});
    if(!user){
     throw new AppError("User not found",httpStatusCode.NOT_FOUND);
@@ -32,7 +35,7 @@ const paymentSession=async(userId:string,priceId:string)=>{
                 quantity:1
             }
         ],
-       success_url:'http://localhost:3000/success',
+       success_url:`http://localhost:5000/api/v1/payments/success?userId=${userId}&transactionId=${transactionId}`,
        cancel_url:'http://localhost:3000/cancel'
     })
 
@@ -59,7 +62,20 @@ const paymentSession=async(userId:string,priceId:string)=>{
     return session;
 }
 
+const paymentSuccess=async(userId:string,transactionId:string)=>{
+     return await prisma.$transaction(async(tx)=>{
+
+        const updatedPayments= await tx.payment.upsert({
+            where:{userId:userId,transactionId:transactionId},
+            create:{status:'completed',transactionId:transactionId,amount:0,userId},
+            update:{status:'completed',transactionId:transactionId},
+        })
+        return updatedPayments;
+     })
+}
+
 export const paymentServices={
     createPaymentInit,
-    paymentSession
+    paymentSession,
+    paymentSuccess
 }
