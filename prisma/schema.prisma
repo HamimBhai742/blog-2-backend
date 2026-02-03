@@ -1,0 +1,63 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role      @default(USER)
+  
+  posts     Post[]
+  likes   PostLike[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+@@map("users")
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  views     Int  @default(0)
+  like      Int  @default(0)
+  authorId  String
+
+
+  author    User @relation(fields: [authorId], references: [id])
+  likes     PostLike[]
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+@@map("posts")
+}
+
+model PostLike{
+  id String @id @default(uuid())
+  authorId String
+  postId String
+
+  author User @relation(fields: [authorId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([authorId, postId])
+  
+@@map("post_likes")
+
+}
+
+enum Role {
+  ADMIN
+  USER
+}
